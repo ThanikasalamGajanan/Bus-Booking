@@ -1,10 +1,6 @@
-package bus_reservation_system;
-
-import java.util.logging.Logger;
+ package bus_reservation_system;;
 
 public class Bus extends Vehicle {
-
-    private static final Logger LOGGER = Logger.getLogger(Bus.class.getName());
 
     private String route;
     private String type;
@@ -30,13 +26,13 @@ public class Bus extends Vehicle {
 
     @Override
     public void display() {
-        LOGGER.info("-----------------------------------");
-        LOGGER.info("Bus No: " + vehicleNo);
-        LOGGER.info("Route: " + route);
-        LOGGER.info("Type: " + type);
-        LOGGER.info("Seats Available: " + seatCount);
-        LOGGER.info("Normal Price: " + normalPrice);
-        LOGGER.info("Full Price: " + fullPrice);
-        LOGGER.info("-----------------------------------");
+        System.out.println("-----------------------------------");
+        System.out.println("Bus No: " + vehicleNo);
+        System.out.println("Route: " + route);
+        System.out.println("Type: " + type);
+        System.out.println("Seats Available: " + seatCount);
+        System.out.println("Normal Price: " + normalPrice);
+        System.out.println("Full Price: " + fullPrice);
+        System.out.println("-----------------------------------");
     }
 }
