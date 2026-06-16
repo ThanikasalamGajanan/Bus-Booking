@@ -1,25 +1,8 @@
 package bus_reservation_system;
-
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
-public final class MainSystem {
-
-    private static final Logger LOGGER =
-            Logger.getLogger(MainSystem.class.getName());
-
-    private static final int ADD_BUS = 1;
-    private static final int VIEW_BUSES = 2;
-    private static final int MAKE_BOOKING = 3;
-    private static final int VIEW_BOOKINGS = 4;
-    private static final int CANCEL_BOOKING = 5;
-    private static final int ADMIN_LOGIN = 6;
-    private static final int EXIT = 7;
-
-    private MainSystem() {
-        // Prevent instantiation
-    }
+public class MainSystem {
 
     public static void main(String[] args) {
 
@@ -27,261 +10,191 @@ public final class MainSystem {
         ArrayList<Booking> bookings = new ArrayList<>();
 
         Admin admin = new Admin();
-        Scanner scanner = new Scanner(System.in);
 
+        Scanner scanner = new Scanner(System.in);
         boolean loggedInAsAdmin = false;
         boolean running = true;
 
         while (running) {
 
-            displayMenu();
+            System.out.println("\n=== BUS RESERVATION SYSTEM ===");
+            System.out.println("1. Add Bus (Admin Only)");
+            System.out.println("2. View Buses");
+            System.out.println("3. Make Booking");
+            System.out.println("4. View Bookings");
+            System.out.println("5. Cancel Booking");
+            System.out.println("6. Admin Login");
+            System.out.println("7. Exit");
 
-            int option = readInt(scanner);
+            System.out.print("Enter an option: ");
+
+            int option;
+            try {
+                option = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("❌ Please enter a valid number.");
+                continue;
+            }
 
             switch (option) {
 
-                case ADD_BUS:
-                    loggedInAsAdmin = addBus(
-                            scanner, buses, loggedInAsAdmin);
+
+                case 1:
+                    if (!loggedInAsAdmin) {
+                        System.out.println("❌ Access Denied! Log in as Admin first.");
+                        break;
+                    }
+
+                    System.out.print("Enter Bus No: ");
+                    String busNo = scanner.nextLine();
+
+                    if (AvailabilityChecker.findBus(buses, busNo) != null) {
+                        System.out.println("❌ Bus with this number already exists!");
+                        break;
+                    }
+
+                    System.out.print("Enter Seat Count: ");
+                    int seatCount;
+                    try {
+                        seatCount = Integer.parseInt(scanner.nextLine());
+                    } catch (Exception e) {
+                        System.out.println("❌ Invalid seat count!");
+                        break;
+                    }
+
+                    System.out.print("Enter Route: ");
+                    String route = scanner.nextLine();
+
+                    System.out.print("Enter Type (AC/Non-AC): ");
+                    String type = scanner.nextLine();
+
+                    System.out.print("Enter Normal Ticket Price: ");
+                    int normalPrice = Integer.parseInt(scanner.nextLine());
+
+                    System.out.print("Enter Full Ticket Price: ");
+                    int fullPrice = Integer.parseInt(scanner.nextLine());
+
+                    buses.add(new Bus(busNo, seatCount, route, type, normalPrice, fullPrice));
+                    System.out.println("✔ Bus added successfully!");
                     break;
 
-                case VIEW_BUSES:
-                    viewBuses(buses);
+                case 2:
+                    if (buses.isEmpty()) {
+                        System.out.println("No buses available.");
+                    } else {
+                        System.out.println("\n--- AVAILABLE BUSES ---");
+                        for (Bus b : buses) b.display();
+                    }
                     break;
 
-                case MAKE_BOOKING:
-                    makeBooking(scanner, buses, bookings);
+                case 3:
+                    System.out.print("Enter Bus No: ");
+                    String bookBusNo = scanner.nextLine();
+
+                    Bus selectedBus = AvailabilityChecker.findBus(buses, bookBusNo);
+                    if (selectedBus == null) {
+                        System.out.println("❌ Bus not found!");
+                        break;
+                    }
+
+                    System.out.print("Enter Seats Required: ");
+                    int seats;
+                    try {
+                        seats = Integer.parseInt(scanner.nextLine());
+                    } catch (Exception e) {
+                        System.out.println("❌ Invalid number!");
+                        break;
+                    }
+
+                    if (!AvailabilityChecker.checkSeats(selectedBus, seats)) {
+                        System.out.println("❌ Not enough seats available!");
+                        break;
+                    }
+
+                    System.out.print("Enter Passenger Name: ");
+                    String pName = scanner.nextLine();
+
+                    System.out.print("Enter Phone: ");
+                    String pPhone = scanner.nextLine();
+
+                    Passenger passenger = new Passenger(pName, pPhone);
+
+                    selectedBus.reduceSeats(seats);
+
+                    bookings.add(new Booking(passenger, seats, bookBusNo));
+
+                    System.out.println("✔ Booking Successful!");
                     break;
 
-                case VIEW_BOOKINGS:
-                    viewBookings(bookings);
+                case 4:
+                    if (bookings.isEmpty()) {
+                        System.out.println("No bookings found.");
+                    } else {
+                        System.out.println("\n--- BOOKING DETAILS ---");
+                        for (Booking b : bookings) b.display();
+                    }
                     break;
 
-                case CANCEL_BOOKING:
-                    cancelBooking(scanner, buses, bookings);
+                case 5:
+                    if (bookings.isEmpty()) {
+                        System.out.println("No bookings to cancel.");
+                        break;
+                    }
+
+                    System.out.print("Enter Passenger Name to Cancel: ");
+                    String cancelName = scanner.nextLine();
+
+                    Booking bookingToCancel = null;
+
+                    for (Booking bk : bookings) {
+                        if (bk.getPassengerName().equalsIgnoreCase(cancelName)) {
+                            bookingToCancel = bk;
+                            break;
+                        }
+                    }
+
+                    if (bookingToCancel == null) {
+                        System.out.println("❌ Booking not found!");
+                        break;
+                    }
+
+                    Bus busToRestore = AvailabilityChecker.findBus(buses, bookingToCancel.getBusNo());
+                    if (busToRestore != null) {
+                        busToRestore.restoreSeats(bookingToCancel.getSeatAmount());
+                    }
+
+                    bookings.remove(bookingToCancel);
+                    System.out.println("✔ Booking Cancelled Successfully!");
                     break;
 
-                case ADMIN_LOGIN:
-                    loggedInAsAdmin = adminLogin(scanner, admin);
+
+                case 6:
+                    System.out.print("Enter Admin Username: ");
+                    String user = scanner.nextLine();
+
+                    System.out.print("Enter Admin Password: ");
+                    String pass = scanner.nextLine();
+
+                    if (admin.login(user, pass)) {
+                        loggedInAsAdmin = true;
+                        System.out.println("✔ Admin login successful!");
+                    } else {
+                        System.out.println("❌ Incorrect username or password.");
+                    }
                     break;
 
-                case EXIT:
-                    LOGGER.info(
-                            "Thank you for using the Bus Reservation System!");
+
+                case 7:
+                    System.out.println("✨ Thank you for using the Bus Reservation System!");
                     running = false;
                     break;
 
                 default:
-                    LOGGER.warning("Invalid option!");
+                    System.out.println("❌ Invalid option!");
             }
         }
 
         scanner.close();
         admin.displayInfo();
-    }
-
-    private static void displayMenu() {
-        LOGGER.info("""
-                === BUS RESERVATION SYSTEM ===
-                1. Add Bus (Admin Only)
-                2. View Buses
-                3. Make Booking
-                4. View Bookings
-                5. Cancel Booking
-                6. Admin Login
-                7. Exit
-                """);
-    }
-
-    private static int readInt(Scanner scanner) {
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            LOGGER.warning("Please enter a valid number.");
-            return -1;
-        }
-    }
-
-    private static boolean addBus(
-            Scanner scanner,
-            ArrayList<Bus> buses,
-            boolean loggedInAsAdmin) {
-
-        if (!loggedInAsAdmin) {
-            LOGGER.warning(
-                    "Access Denied! Log in as Admin first.");
-            return false;
-        }
-
-        System.out.print("Enter Bus No: ");
-        String busNo = scanner.nextLine();
-
-        if (AvailabilityChecker.findBus(buses, busNo) != null) {
-            LOGGER.warning("Bus already exists!");
-            return true;
-        }
-
-        System.out.print("Enter Seat Count: ");
-        int seatCount = readInt(scanner);
-
-        System.out.print("Enter Route: ");
-        String route = scanner.nextLine();
-
-        System.out.print("Enter Type (AC/Non-AC): ");
-        String type = scanner.nextLine();
-
-        System.out.print("Enter Normal Ticket Price: ");
-        int normalPrice = readInt(scanner);
-
-        System.out.print("Enter Full Ticket Price: ");
-        int fullPrice = readInt(scanner);
-
-        buses.add(new Bus(
-                busNo,
-                seatCount,
-                route,
-                type,
-                normalPrice,
-                fullPrice));
-
-        LOGGER.info("Bus added successfully!");
-        return true;
-    }
-
-    private static void viewBuses(ArrayList<Bus> buses) {
-
-        if (buses.isEmpty()) {
-            LOGGER.info("No buses available.");
-            return;
-        }
-
-        LOGGER.info("--- AVAILABLE BUSES ---");
-
-        for (Bus bus : buses) {
-            bus.display();
-        }
-    }
-
-    private static void makeBooking(
-            Scanner scanner,
-            ArrayList<Bus> buses,
-            ArrayList<Booking> bookings) {
-
-        System.out.print("Enter Bus No: ");
-        String busNo = scanner.nextLine();
-
-        Bus selectedBus =
-                AvailabilityChecker.findBus(buses, busNo);
-
-        if (selectedBus == null) {
-            LOGGER.warning("Bus not found!");
-            return;
-        }
-
-        System.out.print("Enter Seats Required: ");
-        int seats = readInt(scanner);
-
-        if (!AvailabilityChecker.checkSeats(selectedBus, seats)) {
-            LOGGER.warning("Not enough seats available!");
-            return;
-        }
-
-        System.out.print("Enter Passenger Name: ");
-        String passengerName = scanner.nextLine();
-
-        System.out.print("Enter Phone: ");
-        String phone = scanner.nextLine();
-
-        Passenger passenger =
-                new Passenger(passengerName, phone);
-
-        selectedBus.reduceSeats(seats);
-
-        bookings.add(
-                new Booking(passenger, seats, busNo));
-
-        LOGGER.info("Booking Successful!");
-    }
-
-    private static void viewBookings(
-            ArrayList<Booking> bookings) {
-
-        if (bookings.isEmpty()) {
-            LOGGER.info("No bookings found.");
-            return;
-        }
-
-        LOGGER.info("--- BOOKING DETAILS ---");
-
-        for (Booking booking : bookings) {
-            booking.display();
-        }
-    }
-
-    private static void cancelBooking(
-            Scanner scanner,
-            ArrayList<Bus> buses,
-            ArrayList<Booking> bookings) {
-
-        if (bookings.isEmpty()) {
-            LOGGER.info("No bookings to cancel.");
-            return;
-        }
-
-        System.out.print(
-                "Enter Passenger Name to Cancel: ");
-
-        String cancelName = scanner.nextLine();
-
-        Booking bookingToCancel = null;
-
-        for (Booking booking : bookings) {
-            if (booking.getPassengerName()
-                    .equalsIgnoreCase(cancelName)) {
-
-                bookingToCancel = booking;
-                break;
-            }
-        }
-
-        if (bookingToCancel == null) {
-            LOGGER.warning("Booking not found!");
-            return;
-        }
-
-        Bus busToRestore =
-                AvailabilityChecker.findBus(
-                        buses,
-                        bookingToCancel.getBusNo());
-
-        if (busToRestore != null) {
-            busToRestore.restoreSeats(
-                    bookingToCancel.getSeatAmount());
-        }
-
-        bookings.remove(bookingToCancel);
-
-        LOGGER.info(
-                "Booking Cancelled Successfully!");
-    }
-
-    private static boolean adminLogin(
-            Scanner scanner,
-            Admin admin) {
-
-        System.out.print("Enter Admin Username: ");
-        String username = scanner.nextLine();
-
-        System.out.print("Enter Admin Password: ");
-        String password = scanner.nextLine();
-
-        if (admin.login(username, password)) {
-            LOGGER.info("Admin login successful!");
-            return true;
-        }
-
-        LOGGER.warning(
-                "Incorrect username or password.");
-        return false;
     }
 }
