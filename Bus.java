@@ -1,6 +1,7 @@
 package busReservationSystem;
 
 public class Bus extends Vehicle {
+    //an abstract class for store vehicle details and its a child class of the bus class
 
     private String route;
     private String type;
