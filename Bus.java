@@ -1,15 +1,22 @@
-package busReservationSystem;
+package bus_reservation_system;
+
+import java.util.logging.Logger;
 
 public class Bus extends Vehicle {
+    //an abstract class for store vehicle details and its a child class of the bus class
 
-    private String route;
-    private String type;
-    private int normalPrice;
-    private int fullPrice;
+    private static final Logger LOGGER = Logger.getLogger(Bus.class.getName());
+
+    private final String route;
+    private final String type;
+    private final int normalPrice;
+    private final int fullPrice;
 
     public Bus(String busNo, int seatCount, String route, String type,
                int normalPrice, int fullPrice) {
+
         super(busNo, seatCount);
+
         this.route = route;
         this.type = type;
         this.normalPrice = normalPrice;
@@ -17,22 +24,46 @@ public class Bus extends Vehicle {
     }
 
     public void reduceSeats(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
         seatCount -= amount;
     }
 
     public void restoreSeats(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
         seatCount += amount;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getNormalPrice() {
+        return normalPrice;
+    }
+
+    public int getFullPrice() {
+        return fullPrice;
     }
 
     @Override
     public void display() {
-        System.out.println("-----------------------------------");
-        System.out.println("Bus No: " + vehicleNo);
-        System.out.println("Route: " + route);
-        System.out.println("Type: " + type);
-        System.out.println("Seats Available: " + seatCount);
-        System.out.println("Normal Price: " + normalPrice);
-        System.out.println("Full Price: " + fullPrice);
-        System.out.println("-----------------------------------");
+        LOGGER.info(() ->
+                "\n-----------------------------------" +
+                        "\nBus No: " + vehicleNo +
+                        "\nRoute: " + route +
+                        "\nType: " + type +
+                        "\nSeats Available: " + seatCount +
+                        "\nNormal Price: " + normalPrice +
+                        "\nFull Price: " + fullPrice +
+                        "\n-----------------------------------"
+        );
     }
 }

@@ -1,4 +1,4 @@
-package busReservationSystem;
+package bus_reservation_system;
 
 // Base class for all vehicles
 public abstract class Vehicle {
@@ -10,6 +10,14 @@ public abstract class Vehicle {
     protected int seatCount;
 
     // Constructor
+public abstract class Vehicle {
+
+    // Unique identifier of the vehicle (e.g., bus number)
+    protected String vehicleNo;
+
+    // Total number of seats available in the vehicle
+    protected int seatCount;
+
     protected Vehicle(String vehicleNo, int seatCount) {
         this.vehicleNo = vehicleNo;
         this.seatCount = seatCount;

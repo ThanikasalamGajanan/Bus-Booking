@@ -1,4 +1,4 @@
-package bus_reservation_system;
+package busReservationSystem;
 
 public class Passenger extends User {
 
