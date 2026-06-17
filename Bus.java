@@ -3,6 +3,7 @@ package bus_reservation_system;
 import java.util.logging.Logger;
 
 public class Bus extends Vehicle {
+    //an abstract class for store vehicle details and its a child class of the bus class
 
     private static final Logger LOGGER = Logger.getLogger(Bus.class.getName());
 

@@ -1,6 +1,7 @@
 package bus_reservation_system;
 
 public class Admin {
+    //contains admin details and passwords
 
     private final String USERNAME = "admin";
     private final String PASSWORD = "1234";

@@ -1,6 +1,7 @@
 package bus_reservation_system;
 
 public class Booking {
+    //manage passengers booking details and display them while need
 
     private Passenger passenger;
     private int seatAmount;
