@@ -2,6 +2,8 @@ package busReservationSystem;
 
 import java.util.ArrayList;
 
+//class for only check availiblity of seats and return the content
+
 public class AvailabilityChecker {
 
     public static Bus findBus(ArrayList<Bus> buses, String busNo) {
