@@ -4,7 +4,7 @@ public abstract class Vehicle {
     protected String vehicleNo;
     protected int seatCount;
 
-    public Vehicle(String vehicleNo, int seatCount) {
+    protected Vehicle(String vehicleNo, int seatCount) {
         this.vehicleNo = vehicleNo;
         this.seatCount = seatCount;
     }
