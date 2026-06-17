@@ -28,6 +28,12 @@ public class AvailabilityChecker {
     }
 
     /**
+     *
+     *
+     *
+     *
+     *
+     *
      * Checks whether the requested number of seats is available.
      *
      * @param bus            Selected bus
