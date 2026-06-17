@@ -1,4 +1,4 @@
-package busReservationSystem;
+package bus_reservation_system;
 
 import java.util.ArrayList;
 

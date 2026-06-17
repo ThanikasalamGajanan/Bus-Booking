@@ -1,4 +1,4 @@
-package busReservationSystem;
+package bus_reservation_system;
 
 /**
  * Abstract base class representing a vehicle in the reservation system.

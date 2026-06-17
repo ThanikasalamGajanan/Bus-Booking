@@ -1,4 +1,4 @@
-package busReservationSystem;
+package bus_reservation_system;
 
 public abstract class User {
     protected String name;
