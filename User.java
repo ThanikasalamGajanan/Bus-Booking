@@ -1,6 +1,7 @@
 package busReservationSystem;
 
 public abstract class User {
+    //abstract class for handle user informations
     protected String name;
     protected String phone;
 
